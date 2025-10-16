@@ -1,0 +1,183 @@
+# Sample Makefile for C Projects
+# This is a template Makefile that can be used for C programming projects
+
+# Compiler settings
+CC = gcc
+CFLAGS = -std=c99 -Wall -Wextra -Wpedantic -g
+RELEASE_FLAGS = -O2 -DNDEBUG
+DEBUG_FLAGS = -O0 -DDEBUG -g3
+
+# Directories
+SRC_DIR = src
+INCLUDE_DIR = include
+BUILD_DIR = build
+BIN_DIR = bin
+TEST_DIR = tests
+
+# Project settings
+PROJECT_NAME = my_c_project
+TARGET = $(BIN_DIR)/$(PROJECT_NAME)
+TEST_TARGET = $(BIN_DIR)/test_$(PROJECT_NAME)
+
+# Source files
+SOURCES = $(wildcard $(SRC_DIR)/*.c)
+OBJECTS = $(SOURCES:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
+TEST_SOURCES = $(wildcard $(TEST_DIR)/*.c)
+TEST_OBJECTS = $(TEST_SOURCES:$(TEST_DIR)/%.c=$(BUILD_DIR)/test_%.o)
+
+# Include paths
+INCLUDES = -I$(INCLUDE_DIR)
+
+# Library paths and libraries
+LDFLAGS = 
+LIBS = -lm
+
+# Default target
+all: $(TARGET)
+
+# Release build
+release: CFLAGS += $(RELEASE_FLAGS)
+release: clean $(TARGET)
+
+# Debug build
+debug: CFLAGS += $(DEBUG_FLAGS)
+debug: clean $(TARGET)
+
+# Create target executable
+$(TARGET): $(OBJECTS) | $(BIN_DIR)
+	$(CC) $(OBJECTS) -o $@ $(LDFLAGS) $(LIBS)
+	@echo "✓ Built $(PROJECT_NAME) successfully"
+
+# Compile source files to object files
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c | $(BUILD_DIR)
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+
+# Create directories if they don't exist
+$(BUILD_DIR):
+	mkdir -p $(BUILD_DIR)
+
+$(BIN_DIR):
+	mkdir -p $(BIN_DIR)
+
+# Test targets
+test: $(TEST_TARGET)
+	./$(TEST_TARGET)
+
+$(TEST_TARGET): $(TEST_OBJECTS) $(filter-out $(BUILD_DIR)/main.o, $(OBJECTS)) | $(BIN_DIR)
+	$(CC) $^ -o $@ $(LDFLAGS) $(LIBS)
+
+$(BUILD_DIR)/test_%.o: $(TEST_DIR)/%.c | $(BUILD_DIR)
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+
+# Static analysis
+analyze:
+	@echo "Running static analysis..."
+	$(CC) $(CFLAGS) $(INCLUDES) --analyze $(SOURCES)
+
+# Memory check (requires Valgrind on Linux/macOS)
+memcheck: $(TARGET)
+	@echo "Running memory check..."
+	@if command -v valgrind > /dev/null; then \
+		valgrind --leak-check=full --show-leak-kinds=all ./$(TARGET); \
+	else \
+		echo "Valgrind not found. Install valgrind for memory checking."; \
+	fi
+
+# Address sanitizer build
+asan: CFLAGS += -fsanitize=address -fsanitize=undefined
+asan: LDFLAGS += -fsanitize=address -fsanitize=undefined
+asan: clean $(TARGET)
+
+# Coverage build (requires gcov)
+coverage: CFLAGS += --coverage
+coverage: LDFLAGS += --coverage
+coverage: clean $(TARGET)
+	@echo "Built with coverage support. Run tests and use 'make coverage-report'"
+
+coverage-report:
+	@echo "Generating coverage report..."
+	gcov $(SOURCES)
+	@if command -v lcov > /dev/null; then \
+		lcov --capture --directory . --output-file coverage.info; \
+		genhtml coverage.info --output-directory coverage_html; \
+		echo "Coverage report generated in coverage_html/index.html"; \
+	else \
+		echo "lcov not found. Install lcov for HTML coverage reports."; \
+	fi
+
+# Installation
+install: $(TARGET)
+	@echo "Installing $(PROJECT_NAME)..."
+	install -d $(DESTDIR)/usr/local/bin
+	install $(TARGET) $(DESTDIR)/usr/local/bin/
+
+# Cleaning
+clean:
+	@echo "Cleaning build files..."
+	rm -rf $(BUILD_DIR) $(BIN_DIR)
+	rm -f *.gcov *.gcda *.gcno coverage.info
+	rm -rf coverage_html
+
+# Remove all generated files
+distclean: clean
+	rm -f $(PROJECT_NAME)
+
+# Format code (requires clang-format)
+format:
+	@echo "Formatting code..."
+	@if command -v clang-format > /dev/null; then \
+		find $(SRC_DIR) $(INCLUDE_DIR) $(TEST_DIR) -name "*.c" -o -name "*.h" | \
+		xargs clang-format -i -style="{BasedOnStyle: Google, IndentWidth: 4, UseTab: Never}"; \
+		echo "Code formatted successfully"; \
+	else \
+		echo "clang-format not found. Install clang-format for code formatting."; \
+	fi
+
+# Create project structure
+init:
+	@echo "Creating project structure..."
+	mkdir -p $(SRC_DIR) $(INCLUDE_DIR) $(TEST_DIR) $(BUILD_DIR) $(BIN_DIR)
+	@if [ ! -f $(SRC_DIR)/main.c ]; then \
+		echo '#include <stdio.h>' > $(SRC_DIR)/main.c; \
+		echo '' >> $(SRC_DIR)/main.c; \
+		echo 'int main(void) {' >> $(SRC_DIR)/main.c; \
+		echo '    printf("Hello, World!\\n");' >> $(SRC_DIR)/main.c; \
+		echo '    return 0;' >> $(SRC_DIR)/main.c; \
+		echo '}' >> $(SRC_DIR)/main.c; \
+		echo "Created $(SRC_DIR)/main.c"; \
+	fi
+	@echo "Project structure created successfully"
+
+# Show help
+help:
+	@echo "Available targets:"
+	@echo "  all        - Build the project (default)"
+	@echo "  release    - Build optimized release version"
+	@echo "  debug      - Build debug version with debugging symbols"
+	@echo "  test       - Build and run tests"
+	@echo "  analyze    - Run static analysis"
+	@echo "  memcheck   - Run memory leak detection (requires Valgrind)"
+	@echo "  asan       - Build with AddressSanitizer"
+	@echo "  coverage   - Build with coverage support"
+	@echo "  coverage-report - Generate coverage report"
+	@echo "  format     - Format code (requires clang-format)"
+	@echo "  install    - Install the program"
+	@echo "  clean      - Remove build files"
+	@echo "  distclean  - Remove all generated files"
+	@echo "  init       - Create project directory structure"
+	@echo "  help       - Show this help message"
+
+# Print variables (for debugging the Makefile)
+print-%:
+	@echo $* = $($*)
+
+# Phony targets
+.PHONY: all release debug test analyze memcheck asan coverage coverage-report install clean distclean format init help
+
+# Include dependencies (auto-generated)
+-include $(OBJECTS:.o=.d)
+
+# Generate dependency files
+$(BUILD_DIR)/%.d: $(SRC_DIR)/%.c | $(BUILD_DIR)
+	@$(CC) $(CFLAGS) $(INCLUDES) -M $< | \
+	sed 's|$(notdir $*).o|$(BUILD_DIR)/$*.o $(BUILD_DIR)/$*.d|g' > $@

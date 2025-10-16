@@ -1,0 +1,282 @@
+# Recommended GCC Compiler Flags for C Development
+
+This file contains recommended compiler flags for different scenarios in C development.
+
+## Basic Development Flags
+
+### Minimal Flags (Beginner)
+```bash
+gcc -std=c99 -Wall -o program source.c
+```
+
+### Recommended Development Flags
+```bash
+gcc -std=c99 -Wall -Wextra -Wpedantic -g -o program source.c
+```
+
+### Strict Development Flags
+```bash
+gcc -std=c99 -Wall -Wextra -Wpedantic -Werror -g -O0 -o program source.c
+```
+
+## Standard Compliance
+
+### C90/C89 Standard
+```bash
+gcc -std=c90 -pedantic -Wall -Wextra
+```
+
+### C99 Standard (Recommended)
+```bash
+gcc -std=c99 -pedantic -Wall -Wextra
+```
+
+### C11 Standard
+```bash
+gcc -std=c11 -pedantic -Wall -Wextra
+```
+
+### C18 Standard (Latest)
+```bash
+gcc -std=c18 -pedantic -Wall -Wextra
+```
+
+## Warning Flags
+
+### Essential Warnings
+```bash
+-Wall                    # Enable most warnings
+-Wextra                  # Enable extra warnings
+-Wpedantic               # Strict ISO C compliance warnings
+-Werror                  # Treat warnings as errors
+```
+
+### Additional Useful Warnings
+```bash
+-Wshadow                 # Warn about variable shadowing
+-Wpointer-arith          # Warn about pointer arithmetic
+-Wcast-qual              # Warn about cast removing qualifiers
+-Wstrict-prototypes      # Warn about missing prototypes
+-Wmissing-prototypes     # Warn about missing function prototypes
+-Wconversion             # Warn about type conversions
+-Wsign-conversion        # Warn about sign conversions
+-Wformat=2               # Extra format string checking
+-Wundef                  # Warn about undefined macros
+-Wredundant-decls        # Warn about redundant declarations
+-Wunreachable-code       # Warn about unreachable code
+```
+
+### Complete Warning Set
+```bash
+gcc -std=c99 -Wall -Wextra -Wpedantic -Wshadow -Wpointer-arith \
+    -Wcast-qual -Wstrict-prototypes -Wmissing-prototypes \
+    -Wconversion -Wsign-conversion -Wformat=2 -Wundef \
+    -Wredundant-decls -Wunreachable-code -o program source.c
+```
+
+## Optimization Flags
+
+### Debug Build (No Optimization)
+```bash
+gcc -std=c99 -Wall -Wextra -g -O0 -DDEBUG -o program source.c
+```
+
+### Release Build (Optimized)
+```bash
+gcc -std=c99 -Wall -Wextra -O2 -DNDEBUG -o program source.c
+```
+
+### Maximum Optimization
+```bash
+gcc -std=c99 -Wall -Wextra -O3 -DNDEBUG -o program source.c
+```
+
+### Size Optimization
+```bash
+gcc -std=c99 -Wall -Wextra -Os -DNDEBUG -o program source.c
+```
+
+## Debugging Flags
+
+### Basic Debugging
+```bash
+-g                       # Include debugging information
+-O0                      # Disable optimization for debugging
+-DDEBUG                  # Define DEBUG macro
+```
+
+### Enhanced Debugging
+```bash
+-g3                      # Maximum debugging information
+-ggdb                    # GDB-specific debugging info
+-fno-omit-frame-pointer  # Keep frame pointers for better backtraces
+```
+
+### Debug Build Example
+```bash
+gcc -std=c99 -Wall -Wextra -g3 -ggdb -O0 -DDEBUG \
+    -fno-omit-frame-pointer -o program source.c
+```
+
+## Security and Hardening Flags
+
+### Stack Protection
+```bash
+-fstack-protector-strong # Enable stack smashing protection
+-fstack-protector-all    # Maximum stack protection
+```
+
+### Position Independent Code
+```bash
+-fPIC                    # Position independent code
+-fPIE                    # Position independent executable
+-pie                     # Create position independent executable
+```
+
+### Fortify Source
+```bash
+-D_FORTIFY_SOURCE=2      # Enable additional security checks
+```
+
+### Complete Hardening Example
+```bash
+gcc -std=c99 -Wall -Wextra -g -O2 -fstack-protector-strong \
+    -fPIE -pie -D_FORTIFY_SOURCE=2 -o program source.c
+```
+
+## Sanitizer Flags
+
+### AddressSanitizer (Memory Errors)
+```bash
+gcc -std=c99 -Wall -Wextra -g -fsanitize=address -o program source.c
+```
+
+### UndefinedBehaviorSanitizer
+```bash
+gcc -std=c99 -Wall -Wextra -g -fsanitize=undefined -o program source.c
+```
+
+### ThreadSanitizer (Race Conditions)
+```bash
+gcc -std=c99 -Wall -Wextra -g -fsanitize=thread -o program source.c
+```
+
+### Multiple Sanitizers
+```bash
+gcc -std=c99 -Wall -Wextra -g -fsanitize=address,undefined \
+    -o program source.c
+```
+
+## Static Analysis Flags
+
+### GCC Static Analyzer
+```bash
+gcc -std=c99 -Wall -Wextra -fanalyzer -o program source.c
+```
+
+### Enable All Static Analysis
+```bash
+gcc -std=c99 -Wall -Wextra -Wpedantic -fanalyzer \
+    -Wanalyzer-too-complex -o program source.c
+```
+
+## Linking Flags
+
+### Math Library
+```bash
+gcc -std=c99 -Wall -Wextra -o program source.c -lm
+```
+
+### Threading (POSIX)
+```bash
+gcc -std=c99 -Wall -Wextra -pthread -o program source.c
+```
+
+### Multiple Libraries
+```bash
+gcc -std=c99 -Wall -Wextra -o program source.c -lm -lpthread
+```
+
+## Profile and Coverage Flags
+
+### Profiling with gprof
+```bash
+gcc -std=c99 -Wall -Wextra -pg -o program source.c
+```
+
+### Code Coverage with gcov
+```bash
+gcc -std=c99 -Wall -Wextra --coverage -o program source.c
+```
+
+### Combined Profiling and Coverage
+```bash
+gcc -std=c99 -Wall -Wextra -pg --coverage -o program source.c
+```
+
+## Architecture-Specific Flags
+
+### Generic Optimization
+```bash
+-march=native            # Optimize for current CPU
+-mtune=native            # Tune for current CPU
+```
+
+### x86-64 Specific
+```bash
+-m64                     # 64-bit compilation
+-msse4.2                 # Enable SSE 4.2 instructions
+```
+
+### Complete Performance Build
+```bash
+gcc -std=c99 -Wall -Wextra -O3 -march=native -mtune=native \
+    -flto -o program source.c
+```
+
+## Preset Configurations
+
+### Development Configuration
+```bash
+CFLAGS_DEV="-std=c99 -Wall -Wextra -Wpedantic -g -O0 -DDEBUG"
+gcc $CFLAGS_DEV -o program source.c
+```
+
+### Testing Configuration
+```bash
+CFLAGS_TEST="-std=c99 -Wall -Wextra -g -fsanitize=address,undefined"
+gcc $CFLAGS_TEST -o program source.c
+```
+
+### Production Configuration
+```bash
+CFLAGS_PROD="-std=c99 -Wall -Wextra -O2 -DNDEBUG -fstack-protector-strong"
+gcc $CFLAGS_PROD -o program source.c
+```
+
+### Research/Learning Configuration
+```bash
+CFLAGS_LEARN="-std=c99 -Wall -Wextra -Wpedantic -Werror -g -fanalyzer"
+gcc $CFLAGS_LEARN -o program source.c
+```
+
+## Quick Reference
+
+| Purpose | Flags |
+|---------|-------|
+| Quick compile | `-std=c99 -Wall` |
+| Development | `-std=c99 -Wall -Wextra -g -O0` |
+| Testing | `-std=c99 -Wall -Wextra -g -fsanitize=address` |
+| Production | `-std=c99 -Wall -Wextra -O2 -DNDEBUG` |
+| Maximum warnings | `-Wall -Wextra -Wpedantic -Werror` |
+| Math programs | `add -lm` |
+| Threaded programs | `add -pthread` |
+
+## Usage Tips
+
+1. **Start Simple**: Begin with `-std=c99 -Wall -Wextra`
+2. **Add Gradually**: Introduce more flags as you learn
+3. **Different Builds**: Use different flag sets for debug vs release
+4. **Makefile Integration**: Set flags as variables in Makefiles
+5. **IDE Configuration**: Configure your IDE to use these flags
+6. **Team Standards**: Establish consistent flags across your team

@@ -194,11 +194,14 @@ Feel free to contribute by:
 
 This repository is open source and available under the [MIT License](LICENSE).
 
-## 📞 Contact
+## 👨‍💻 Author
 
-- **Author**: Bishal Goutam
-- **GitHub**: [bishalgoutam](https://github.com/bishalgoutam)
-- **Email**: [your-email@example.com]
+**Bishal Goutam**
+- Developer with 17+ years of experience
+- MS in Software Development
+- MS in Artificial Intelligence & Machine Learning
+- MS in Information Systems
+- BE in Electronics and Communications Engineering
 
 ---
 

@@ -201,5 +201,3 @@ valgrind --leak-check=full ./program
 - [GDB Quick Reference](https://sourceware.org/gdb/onlinedocs/gdb/)
 
 ---
-
-**Next Steps**: After setting up your environment, start with the programs in the `fundamentals/` directory to practice basic C programming concepts.

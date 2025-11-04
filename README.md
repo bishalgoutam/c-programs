@@ -206,5 +206,3 @@ This repository is open source and available under the [MIT License](LICENSE).
 ---
 
 **Happy Coding!** 🚀
-
-*This repository is continuously updated with new programs and improvements. Star ⭐ this repo to stay updated with the latest additions!*
